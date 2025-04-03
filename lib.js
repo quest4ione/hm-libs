@@ -236,9 +236,5 @@ function(C, A) {
   var D = L.P.qne(#fs.scripts.quine(), "@", L.P.json);
   L.D = D;
 
-  if (C.caller != "qst" || (C.calling_script && C.calling_script.split(".")[0] != "qst")) {
-    return L.F.res({ status: 403, msg: "If only it would be that easy" });
-  }
-
   return DEEP_FREEZE(L);
 }
