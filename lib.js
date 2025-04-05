@@ -101,7 +101,7 @@ function(C, A) {
         return out.join("\n");
       },
       panic(type, msg, detail = {}) {
-        throw L.R._safe_err(type, msg, detail)
+        throw L.R.custom_err(type, msg, detail)
       },
     },
 
@@ -210,25 +210,25 @@ function(C, A) {
         err(type, msg, detail = {}) {return L.R.rslt._rslt(L.R._safe_err(type, msg, detail))},
       },
 
-      _safe_err(type, msg, detail = {}) {
+      custom_err(type, msg, detail = {}) {
         let e = new Error(msg);
-        let s = `${type}: ${msg}\n`;
-
-        // opsec-ify stack
-        for (let l of e.stack.split("\n")) {
-          if (l.includes(C.this_script)) {
-            continue;
-          }
-          s += `${l}\n`;
-        }
 
         // cause of read-only shenanigans
         Object.defineProperties(e, {
           name: { value: type, enumerable: true },
-          stack: { value: s },
           detail: { value: detail, enumerable: true }
         });
-        return e;
+        return L.R._anonimize_error(e);
+      },
+      _anonimize_error(error) {
+        let s = "";
+        for (let l of error.stack.split("\n")) {
+          if (!l.includes(C.this_script)) {
+            s += `${l}\n`;
+          }
+        }
+        Object.defineProperty(error, "stack", { value: s });
+        return error;
       },
     },
   };
