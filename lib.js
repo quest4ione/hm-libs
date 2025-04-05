@@ -165,20 +165,29 @@ function(C, A) {
 
     R: { // the COMPUTER-READABLE FORMATTING
       optn: {
-        _optn(value) {
+        _optn(val) {
           let O = {
-            ok: value !== undefined,
-            unwrap: () => {
-              if (O.ok) {
-                return value;
-              }
-              L.F.panic("QstLibNoneUnwrap", "Unwrap on none option");
+            type: "qst.lib.option",
+            ok: val !== undefined,
+            val: O.ok ? val : undefined,
+            unwrap() {
+              return O.expect("Unwrap on none option");
             },
-            unwrap_or: or => {
-              if (O.ok) {
-                return value;
+            unwrap_or(or) {
+              return O.ok ? O.val : or;
+            },
+            expect(msg) {
+              if (!O.ok) {
+                L.F.panic("QstLibNoneUnwrap", msg);
               }
-              return or;
+              return O.val;
+            },
+
+            map(fun) {
+              if (O.ok) {
+                return L.R.optn._optn(fun(O.val));
+              }
+              return O;
             },
           };
           return O;
@@ -188,20 +197,36 @@ function(C, A) {
       },
 
       rslt: {
-        _rslt(value) {
+        _rslt(val) {
           let O = {
-            ok: !(value instanceof Error),
-            unwrap: () => {
-              if (O.ok) {
-                return value;
-              }
-              L.F.panic("QstLibErrUnwrap", "Unwrap on error result", {err: value});
+            type: "qst.lib.result",
+            ok: !(val instanceof Error),
+            err: !O.ok ? L.R._anonimize_error(val) : undefined,
+            val: O.ok ? val : undefined,
+            unwrap() {
+              return O.expect("Unwrap on err result");
             },
-            unwrap_or: or => {
-              if (O.ok) {
-                return value;
+            unwrap_or(or) {
+              return O.ok ? O.val : or;
+            },
+            expect(msg) {
+              if (!O.ok) {
+                L.F.panic("QstLibErrUnwrap", `${msg}: ${O.err}`, {err: O.err});
               }
-              return or;
+              return O.val;
+            },
+
+            map(fun) {
+              if (O.ok) {
+                return L.R.rslt._rslt(fun(O.val));
+              }
+              return O;
+            },
+            map_err(fun) {
+              if (!O.ok) {
+                return L.R.rslt._rslt(fun(O.err));
+              }
+              return O;
             },
           };
           return O;
