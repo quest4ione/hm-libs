@@ -195,7 +195,7 @@ function(C, A) {
               if (O.ok) {
                 return value;
               }
-              L.F.panic("QstLibErrUnwrap", "Unwrap on error result");
+              L.F.panic("QstLibErrUnwrap", "Unwrap on error result", {err: value});
             },
             unwrap_or: or => {
               if (O.ok) {
