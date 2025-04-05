@@ -207,7 +207,16 @@ function(C, A) {
           return O;
         },
         ok(value) {return L.R.rslt._rslt(value)},
-        err(type, msg, detail = {}) {return L.R.rslt._rslt(L.R._safe_err(type, msg, detail))},
+        err(err) {return L.R.rslt._rslt(L.R._anonimize_error(err))},
+        try(func) {
+          let res;
+          try {
+            res = func();
+          } catch (e) {
+            return L.R.rslt.err(err);
+          }
+          return L.R.rslt.ok(res);
+        },
       },
 
       custom_err(type, msg, detail = {}) {
