@@ -125,7 +125,7 @@ function(C, A) {
         return JSON.parse(I);
       },
 
-      res(val) {return val}, // TODO
+      res(val) { return val }, // TODO
       dco(fn) {
         let O = [];
         let done = false;
@@ -149,7 +149,7 @@ function(C, A) {
             for (let j = 0; j < p.length; j++) {
               if (O[i][j] == "§") {
                 done = false;
-                O[i] = O[i].slice(0, j) + p[j] + O[i].slice(j+1);
+                O[i] = O[i].slice(0, j) + p[j] + O[i].slice(j + 1);
               }
             }
           }
@@ -183,8 +183,8 @@ function(C, A) {
           };
           return O;
         },
-        some(value) {return L.R.optn._optn(value)},
-        none() {return L.R.optn._optn()},
+        some(val) { return L.R.optn._optn(val) },
+        none() { return L.R.optn._optn() },
       },
 
       rslt: {
@@ -206,14 +206,14 @@ function(C, A) {
           };
           return O;
         },
-        ok(value) {return L.R.rslt._rslt(value)},
-        err(err) {return L.R.rslt._rslt(L.R._anonimize_error(err))},
-        try(func) {
+        ok(val) { return L.R.rslt._rslt(val) },
+        err(err) { return L.R.rslt._rslt(L.R._anonimize_error(err)) },
+        try(fun) {
           let res;
           try {
-            res = func();
+            res = fun();
           } catch (e) {
-            return L.R.rslt.err(err);
+            return L.R.rslt.err(e);
           }
           return L.R.rslt.ok(res);
         },
