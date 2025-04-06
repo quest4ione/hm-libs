@@ -228,7 +228,7 @@ function(C, A) {
         Object.defineProperties(e, {
           name: { value: type, enumerable: true },
           stack: { value: s },
-          detail: { value: detail }
+          detail: { value: detail, enumerable: true }
         });
         return e;
       },
