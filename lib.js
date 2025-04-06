@@ -166,10 +166,11 @@ function(C, A) {
     R: { // the COMPUTER-READABLE FORMATTING
       optn: {
         _optn(val) {
+          let ok = val !== undefined;
           let O = {
             type: "qst.lib.option",
-            ok: val !== undefined,
-            val: O.ok ? val : undefined,
+            ok,
+            val: ok ? val : undefined,
             unwrap() {
               return O.expect("Unwrap on none option");
             },
@@ -198,11 +199,12 @@ function(C, A) {
 
       rslt: {
         _rslt(val) {
+          let ok = !(val instanceof Error);
           let O = {
             type: "qst.lib.result",
-            ok: !(val instanceof Error),
-            err: !O.ok ? L.R._anonimize_error(val) : undefined,
-            val: O.ok ? val : undefined,
+            ok,
+            val: ok ? val : undefined,
+            err: !ok ? L.R._anonimize_error(val) : undefined,
             unwrap() {
               return O.expect("Unwrap on err result");
             },
