@@ -252,5 +252,5 @@ function(C, A) {
     return L.F.res({ status: 403, msg: "If only it would be that easy" });
   }
 
-  return L;
+  return DEEP_FREEZE(L);
 }
