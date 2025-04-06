@@ -1,7 +1,26 @@
 function(C, A) {
   let L = #fs.qst.lib();
 
-  let DB = {};
+  if (!#G.cache) {
+    #G.cache = {};
+  }
+
+  let DB = {
+    __get(id) {
+      if (!(id in #G.cache)) {
+        let res = L.R.rslt.try(() => #db.f({_id: id}));
+        if (!res.ok) {
+          return res;
+        }
+        #G.cache[id] = res.unwrap().first();
+      }
+
+      if (#G.cache[id] === null) {
+        return L.R.rslt.ok(L.R.optn.none());
+      }
+      return L.R.rslt.ok(L.R.optn.some(#G.cache[id]));
+    },
+  };
 
   if (C.calling_script) {
     if (C.calling_script.split(".")[0] != C.this_script.split(".")[0]) {
