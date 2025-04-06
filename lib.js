@@ -233,14 +233,6 @@ function(C, A) {
         return e;
       },
     },
-    DB: {
-      f(...a) {return #db.f(...a)},
-      i(...a) {return #db.i(...a)},
-      u(...a) {return #db.u(...a)},
-      us(...a) {return #db.us(...a)},
-      u1(...a) {return #db.u1(...a)},
-      r(...a) {return #db.r(...a)},
-    },
   };
 
 
