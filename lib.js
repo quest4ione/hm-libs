@@ -74,13 +74,13 @@ function(C, A) {
 
   let L = { // the LIB
     F: { // the HUMAN-READABLE FORMATTING
-      sts: code => { // http status msg
+      sts(code) { // http status msg
         if (code in L.D.status) {
           return L.R.optn.some(L.D.status[code]);
         }
         return L.R.optn.none();
       },
-      res: val => {
+      res(val) {
         val = L.P.res(val);
 
         let out = [];
@@ -102,14 +102,14 @@ function(C, A) {
         out.push(val.msg);
         return out.join("\n");
       },
-      panic: (type, msg, detail = {}) => {
+      panic(type, msg, detail = {}) {
         throw L.R._safe_err(type, msg, detail)
       },
     },
 
 
     P: { // the PARSING (dun-dunnn)
-      qne: (I, label, parser = x => x) => { // trims and concats comments starting with label char (e.g. //! or //@) and returns the (parsered) result
+      qne(I, label, parser = x => x) { // trims and concats comments starting with label char (e.g. //! or //@) and returns the (parsered) result
         let O = "";
         for (let line of I.split("\n")) {
           let r = new RegExp(`^\\s*\\/\\/${label}\\s*(.*)\\s*`, "m").exec(line); // extra \ cause of pattern string into regex
@@ -121,14 +121,14 @@ function(C, A) {
         return parser(O);
       },
 
-      json: I => {
+      json(I) {
         I = I.replaceAll(/,(\s*[}\]])/g, "$1") // remove trailing commas
           .replaceAll(/([a-z0-9_]+[^"]):/g, "\"$1\":"); // add quotes to unquoted keys (TODO is gonna break inside string values)
         return JSON.parse(I);
       },
 
-      res: val => val, // TODO
-      dco: fn => {
+      res(val) {return val}, // TODO
+      dco(fn) {
         let O = [];
         let done = false;
         let A = true;
@@ -167,7 +167,7 @@ function(C, A) {
 
     R: { // the COMPUTER-READABLE FORMATTING
       optn: {
-        _optn: value => {
+        _optn(value) {
           let O = {
             ok: value !== undefined,
             unwrap: () => {
@@ -185,12 +185,12 @@ function(C, A) {
           };
           return O;
         },
-        some: value => L.R.optn._optn(value),
-        none: () => L.R.optn._optn(),
+        some(value) {return L.R.optn._optn(value)},
+        none() {return L.R.optn._optn()},
       },
 
       rslt: {
-        _rslt: value => {
+        _rslt(value) {
           let O = {
             ok: !(value instanceof Error),
             unwrap: () => {
@@ -208,11 +208,11 @@ function(C, A) {
           };
           return O;
         },
-        ok: value => L.R.rslt._rslt(value),
-        err: (type, msg, detail = {}) => L.R.rslt._rslt(L.R._safe_err(type, msg, detail)),
+        ok(value) {return L.R.rslt._rslt(value)},
+        err(type, msg, detail = {}) {return L.R.rslt._rslt(L.R._safe_err(type, msg, detail))},
       },
 
-      _safe_err: (type, msg, detail = {}) => {
+      _safe_err(type, msg, detail = {}) {
         let e = new Error(msg);
         let s = `${type}: ${msg}\n`;
 
@@ -234,12 +234,12 @@ function(C, A) {
       },
     },
     DB: {
-      f: (...a) => #db.f(...a),
-      i: (...a) => #db.i(...a),
-      u: (...a) => #db.u(...a),
-      us: (...a) => #db.us(...a),
-      u1: (...a) => #db.u1(...a),
-      r: (...a) => #db.r(...a),
+      f(...a) {return #db.f(...a)},
+      i(...a) {return #db.i(...a)},
+      u(...a) {return #db.u(...a)},
+      us(...a) {return #db.us(...a)},
+      u1(...a) {return #db.u1(...a)},
+      r(...a) {return #db.r(...a)},
     },
   };
 
