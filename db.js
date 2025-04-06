@@ -20,6 +20,23 @@ function(C, A) {
       }
       return L.R.rslt.ok(L.R.optn.some(#G.cache[id]));
     },
+
+    __store(id, doc) {
+      // reject update query
+      if (Object.keys(doc).some(k => k.startsWith("$"))) {
+        return L.R.rslt.err(L.R.custom_err("QstDbUpdateForbidden", "Update queries are not permitted here", {query: doc}));
+      }
+
+      let res = L.R.rslt.try(() => #db.us({_id: id}, doc));
+      if (!res.ok) {
+        return res;
+      }
+      // account for update result having an ok == false (which probably never happens)
+      if (!res.unwrap().ok) {
+        return L.R.rslt.err(L.R.custom_err("QstDbOperationFailed", "Db operation failed for unknown reasons", {response: res}));
+      }
+      return L.R.rslt.ok();
+    }
   };
 
   if (C.calling_script) {
