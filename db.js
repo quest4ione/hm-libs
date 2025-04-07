@@ -31,12 +31,14 @@ function(C, A) {
       if (!res.ok) {
         return res;
       }
+      res = res.unwrap()[0];
       // account for update result having an ok == false (which probably never happens)
-      if (!res.unwrap().ok) {
+      if (!res.ok) {
         return L.R.rslt.err(L.R.custom_err("QstDbOperationFailed", "Db operation failed for unknown reasons", {response: res}));
       }
+      #G.cache[id] = doc;
       return L.R.rslt.ok();
-    }
+    },
   };
 
   if (C.calling_script) {
