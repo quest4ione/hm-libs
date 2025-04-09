@@ -235,11 +235,16 @@ function(C, A) {
         },
         ok(val) { return L.R.rslt._rslt(val) },
         err(err) { return L.R.rslt._rslt(L.R._anonimize_error(err)) },
-        try(fun) {
+        catch_into_result(fun) {
           let res;
           try {
             res = fun();
           } catch (e) {
+            if (typeof e == "string") {
+              e = L.R.custom_err("QstLibCatchString", `Received a string error: ${e}`, {err: e});
+            } else if (!(e instanceof Error)) {
+              e = L.R.custom_err("QstLibCatchNonError", "Caught a non-error object", {err: e});
+            }
             return L.R.rslt.err(e);
           }
           return L.R.rslt.ok(res);
