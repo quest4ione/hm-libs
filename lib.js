@@ -190,11 +190,38 @@ function(C, A) {
               }
               return O;
             },
+
+            try() {
+              if (!O.ok) {
+                throw {type: "qst.lib.optn.try_failed"};
+              }
+              return O.unwrap();
+            },
           };
           return O;
         },
         some(val) { return L.R.optn._optn(val) },
         none() { return L.R.optn._optn() },
+
+        try_wrapper(inner) {
+          let res;
+          try {
+            res = inner();
+          } catch (e) {
+            #D("optn catched")
+            #D(e)
+            if (e && e.type == "qst.lib.optn.try_failed") {
+              #D("optn try failed")
+              return L.R.optn.none();
+            }
+            #D("optn throwing")
+            throw e;
+          }
+          if (!res || res.type != "qst.lib.option") {
+            res = L.R.optn.some(res);
+          }
+          return res;
+        },
       },
 
       rslt: {
@@ -230,6 +257,12 @@ function(C, A) {
               }
               return O;
             },
+            try() {
+              if (!O.ok) {
+                throw {type: "qst.lib.rslt.try_failed", err: O.err};
+              }
+              return O.unwrap();
+            }
           };
           return O;
         },
@@ -250,6 +283,25 @@ function(C, A) {
             return L.R.rslt.err(e);
           }
           return L.R.rslt.ok(res);
+        },
+        try_wrapper(inner) {
+          let res;
+          try {
+            res = inner();
+          } catch (e) {
+            #D("reslt catched")
+            #D(e);
+            if (e && e.type == "qst.lib.rslt.try_failed") {
+              #D("result try failed")
+              return L.R.rslt.err(e.err);
+            }
+            #D("result throwing")
+            throw e;
+          }
+          if (!res || res.type != "qst.lib.result") {
+            res = L.R.rslt.ok(res);
+          }
+          return res;
         },
       },
 
