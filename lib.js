@@ -213,7 +213,7 @@ function(C, A) {
             },
             expect(msg) {
               if (!O.ok) {
-                L.F.panic("QstLibErrUnwrap", `${msg}: ${O.err}`, {err: O.err});
+                L.F.panic("QstLibErrUnwrap", `${msg}: ${O.err}`, { err: O.err });
               }
               return O.val;
             },
