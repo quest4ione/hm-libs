@@ -217,9 +217,6 @@ function(C, A) {
             #D("optn throwing")
             throw e;
           }
-          if (!res || res.type != "qst.lib.option") {
-            res = L.R.optn.some(res);
-          }
           return res;
         },
       },
@@ -297,9 +294,6 @@ function(C, A) {
             }
             #D("result throwing")
             throw e;
-          }
-          if (!res || res.type != "qst.lib.result") {
-            res = L.R.rslt.ok(res);
           }
           return res;
         },
