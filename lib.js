@@ -190,11 +190,31 @@ function(C, A) {
               }
               return O;
             },
+
+            try() {
+              if (!O.ok) {
+                throw {type: "qst.lib.optn.try_failed"};
+              }
+              return O.unwrap();
+            },
           };
           return O;
         },
         some(val) { return L.R.optn._optn(val) },
         none() { return L.R.optn._optn() },
+
+        try_wrapper(inner) {
+          let res;
+          try {
+            res = inner();
+          } catch (e) {
+            if (e && e.type == "qst.lib.optn.try_failed") {
+              return L.R.optn.none();
+            }
+            throw e;
+          }
+          return res;
+        },
       },
 
       rslt: {
@@ -213,7 +233,7 @@ function(C, A) {
             },
             expect(msg) {
               if (!O.ok) {
-                L.F.panic("QstLibErrUnwrap", `${msg}: ${O.err}`, {err: O.err});
+                L.F.panic("QstLibErrUnwrap", `${msg}: ${O.err}`, { err: O.err });
               }
               return O.val;
             },
@@ -230,12 +250,25 @@ function(C, A) {
               }
               return O;
             },
+            try() {
+              if (!O.ok) {
+                throw {type: "qst.lib.rslt.try_failed", err: O.err};
+              }
+              return O.unwrap();
+            }
           };
           return O;
         },
         ok(val) { return L.R.rslt._rslt(val) },
-        err(err) { return L.R.rslt._rslt(L.R._anonimize_error(err)) },
-        try(fun) {
+        err(err) {
+          if (typeof err == "string") {
+            err = L.R.custom_err("QstLibCatchString", `Received a string error: ${err}`, { err: err });
+          } else if (!(err instanceof Error)) {
+            err = L.R.custom_err("QstLibCatchNonError", "Caught a non-error object", { err: err });
+          }
+          return L.R.rslt._rslt(L.R._anonimize_error(err))
+        },
+        catch_into_result(fun) {
           let res;
           try {
             res = fun();
@@ -243,6 +276,18 @@ function(C, A) {
             return L.R.rslt.err(e);
           }
           return L.R.rslt.ok(res);
+        },
+        try_wrapper(inner) {
+          let res;
+          try {
+            res = inner();
+          } catch (e) {
+            if (e && e.type == "qst.lib.rslt.try_failed") {
+              return L.R.rslt.err(e.err);
+            }
+            throw e;
+          }
+          return res;
         },
       },
 
