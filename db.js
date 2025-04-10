@@ -8,7 +8,7 @@ function(C, A) {
   let DB = {
     __get(id) {
       if (!(id in #G.cache)) {
-        let res = L.R.rslt.try(() => #db.f({_id: id}));
+        let res = L.R.rslt.catch_into_result(() => #db.f({_id: id}));
         if (!res.ok) {
           return res;
         }
@@ -27,7 +27,7 @@ function(C, A) {
         return L.R.rslt.err(L.R.custom_err("QstDbUpdateForbidden", "Update queries are not permitted here", {query: doc}));
       }
 
-      let res = L.R.rslt.try(() => #db.us({_id: id}, doc));
+      let res = L.R.rslt.catch_into_result(() => #db.us({_id: id}, doc));
       if (!res.ok) {
         return res;
       }
