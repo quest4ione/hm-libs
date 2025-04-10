@@ -208,13 +208,9 @@ function(C, A) {
           try {
             res = inner();
           } catch (e) {
-            #D("optn catched")
-            #D(e)
             if (e && e.type == "qst.lib.optn.try_failed") {
-              #D("optn try failed")
               return L.R.optn.none();
             }
-            #D("optn throwing")
             throw e;
           }
           return res;
@@ -286,13 +282,9 @@ function(C, A) {
           try {
             res = inner();
           } catch (e) {
-            #D("reslt catched")
-            #D(e);
             if (e && e.type == "qst.lib.rslt.try_failed") {
-              #D("result try failed")
               return L.R.rslt.err(e.err);
             }
-            #D("result throwing")
             throw e;
           }
           return res;
